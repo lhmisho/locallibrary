@@ -12,6 +12,11 @@ class Genre(models.Model):
         """String for representing the Model object."""
         return self.name
 
+    def display_genre(self):
+        """Create a string for the Genre. This is required to display genre in Admin."""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
+
+    display_genre.short_description = 'Genre'
 
 class Book(models.Model):
     """ Model representing books """
@@ -53,21 +58,20 @@ class BookInstance(models.Model):
     def __str__(self):
         return f'{self.id}({self.book.title})' # '{0} ({1})'.format(self.id,self.book.title)).
 
+class Author(models.Model):
+    """Model representing an author."""
+    first_name  = models.CharField(max_length=120)
+    last_name   = models.CharField(max_length=120)
+    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField(null=True, blank=True)
 
-    class Author(models.Model):
-        """Model representing an author."""
-        first_name  = models.CharField(max_length=120)
-        last_name   = models.CharField(max_length=120)
-        date_of_birth = models.DateField(null=True, blank=True)
-        date_of_death = models.DateField(null=True, blank=True)
+    class Meta:
+        ordering = ['last_name', 'first_name']
 
-        class Meta:
-            ordering = ['last_name', 'first_name']
+    def get_absolute_url(self):
+        """Returns the url to access a particular author instance."""
+        return reverse('author-detail', args=[str(self.id)])
 
-        def get_absolute_url(self):
-            """Returns the url to access a particular author instance."""
-            return reverse('author-detail', args=[str(self.id)])
-
-        def __str__(self):
-            """String for representing the Model object."""
-            return f'{self.first_name},{self.last_name}'
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'{self.first_name},{self.last_name}'
