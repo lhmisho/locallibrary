@@ -12,5 +12,6 @@
         <li><strong>Authors:</strong>{{ num_author }}</li>
         <li><strong>Genre:</strong>{{ num_genre }}</li>
         <li><strong>Number of books contain b:</strong>{{ num_of_insensetive_books }}</li>
+        <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
     </ul>
 {% endblock %}
