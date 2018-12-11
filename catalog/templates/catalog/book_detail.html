@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>Title: {{ book.title }}</h1>
-    <p><strong>Author:</strong> <a href="">{{ book.author }}</a>
+    <p><strong>Author:</strong> <a href="{% url 'catalog:author-detail' pk=book.author.id %}">{{ book.author }}</a>
     <p><strong>Summary:</strong>{{ book.summary }}
     <p><strong>ISBN:</strong>{{ book.isbn }}
     <p><strong>Genre:</strong>{% for genre in book.genre.all %}{{ genre }}{% if not forloop.last %},{% endif %}{% endfor %}

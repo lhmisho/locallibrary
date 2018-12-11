@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}<title>Author List</title>{% endblock %}
+
+{% block content %}
+    <h1>Author List</h1>
+    {% if author_list %}
+        <ul>
+            {% for author in author_list %}
+{#                <li><a href="{% url 'catalog:book-detail' pk=book.id %}">{{ book.title }}</a> {{ book.author }}</li>#}
+                <!-- <li><a href="{%url 'catalog:author-detail' pk=author.id %}">{{ author.first_name }} {{author.last_name}}</a></li> -->
+                <li><a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{author.last_name}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>no author found</p>
+    {% endif %}
+{% endblock %}
+

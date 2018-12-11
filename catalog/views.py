@@ -42,3 +42,10 @@ class BookListView(generic.ListView):
 
 class BookDetialView(generic.DetailView):
     model = Book
+
+class AuthorListView(generic.ListView):
+    model = Author
+    queryset = Author.objects.all()
+
+class AuthorDetailView(generic.DetailView):
+    model = Author
