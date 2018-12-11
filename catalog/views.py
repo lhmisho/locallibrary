@@ -38,6 +38,7 @@ class BookListView(generic.ListView):
     model = Book
     queryset = Book.objects.filter(title__icontains='book')[:5]
     template_name = 'catalog/book_list.html'
+    paginate_by = 4
 
 class BookDetialView(generic.DetailView):
     model = Book
