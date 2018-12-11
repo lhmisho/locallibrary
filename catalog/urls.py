@@ -17,8 +17,10 @@ from django.urls import path
 from . import views
 
 
-# app_name = 'catalog'
+app_name = 'catalog'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('books/', views.BookListView.as_view(), name='book'),
+    path('books/<int:pk>', views.BookDetialView.as_view(), name='book-detail'),
 ]
