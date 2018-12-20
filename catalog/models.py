@@ -1,5 +1,8 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
+
+from datetime import date
 import  uuid
 # Create your models here.
 
@@ -42,6 +45,7 @@ class BookInstance(models.Model):
     book    = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=120)
     due_back = models.DateField(null=True, blank = True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     LOAN_STATUS = (
         ('m','Maintenace'),
@@ -54,6 +58,13 @@ class BookInstance(models.Model):
 
     class Meta:
         ordering = ['due_back']
+        permissions = (("can_mark_returned","Set a book as returned"),)
+
+    @property
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
 
     def __str__(self):
         return f'{self.id}({self.book.title})' # '{0} ({1})'.format(self.id,self.book.title)).
