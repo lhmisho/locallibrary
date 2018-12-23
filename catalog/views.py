@@ -1,9 +1,16 @@
+import datetime
+
 from django.shortcuts import render
 from django.views import generic
 from catalog.models import BookInstance, Book, Author,Genre
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import permission_required
+from .forms import RenueBooksForm
 # Create your views here.
 
 
@@ -71,4 +78,53 @@ class LoanedBooksByAdminListview(generic.ListView):
 
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
+
+
+# def renew_book_librarian(request, pk):
+#     book_instance = get_list_or_404(BookInstance, pk=pk)
+#
+#     # If this is a POST request then process the Form data
+#     if request.method == 'POST':
+#         form = RenueBooksForm(request.POST)
+#
+#         if form.is_valid():
+#             book_instance.due_back = form.cleaned_data['renewal_date']
+#             book_instance.save()
+#
+#             return HttpResponseRedirect(reverse('catalog:all-borrowed'))
+#
+#     else:
+#         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+#         form = RenueBooksForm(initial={'renewal_date' : proposed_renewal_date })
+#
+#
+#     context = {
+#         'form' : form,
+#         'book_instance' : book_instance
+#     }
+#
+#     return render(request, 'catalog/book_renew_librarian.html', context)
+
+@permission_required('catalog.can_mark_returned')
+def renew_book_librarian(request, pk):
+    book_instance = get_object_or_404(BookInstance, pk=pk)
+    if request.method == 'POST':
+        form = RenueBooksForm(request.POST)
+
+        if form.is_valid():
+            book_instance.due_back = form.cleaned_data['renewal_date']
+            book_instance.save()
+            return HttpResponseRedirect(reverse('catalog:all-borrowed'))
+
+    else:
+        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+        form = RenueBooksForm(initial={'renewal_date': proposed_renewal_date})
+
+    context = {
+        'form' : form,
+        'book_instance' : book_instance
+    }
+    return render(request, 'catalog/book_renew_librarian.html', context)
+
+
 
