@@ -2,15 +2,16 @@ import datetime
 
 from django.shortcuts import render
 from django.views import generic
+from django.views.generic import  edit as editViews
 from catalog.models import BookInstance, Book, Author,Genre
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import permission_required
-from .forms import RenueBooksForm
+from .forms import RenueBooksForm, RenewBookModelForm
 # Create your views here.
 
 
@@ -127,4 +128,18 @@ def renew_book_librarian(request, pk):
     return render(request, 'catalog/book_renew_librarian.html', context)
 
 
-
+# class RegisterView(editViews.FormView):
+#
+#     form_class = RenewBookModelForm
+#     template_name= 'catalog/book_renew_librarian.html'
+#
+#     def get_context_data(self, pk, **kwargs):
+#         context = super(RegisterView, self).get_context_data(**kwargs)
+#         import pdb;pdb.set_trace()
+#         context['book_instance'] = BookInstance.objects.filter(id=pk)
+#         return context
+#
+#     def form_valid(self, form):
+#         request = self.request
+#         form.save()
+#         return render(self.request, 'register/thank_you.html')
