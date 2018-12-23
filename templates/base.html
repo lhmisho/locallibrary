@@ -31,6 +31,9 @@
             {% else %}
             <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
         {% endif %}
+        {% if user.is_superuser %}
+        <li><a href="{% url 'catalog:all-borrowed' %}">All Borrowed </a> </li>
+        {% endif %}
         </ul>
       {% endblock %}
 
