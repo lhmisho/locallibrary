@@ -1,17 +1,20 @@
 import datetime
 
-from django.shortcuts import render
-from django.views import generic
-from django.views.generic import  edit as editViews
-from catalog.models import BookInstance, Book, Author,Genre
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.decorators import user_passes_test
-from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import (permission_required,
+                                            user_passes_test)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.decorators import permission_required
-from .forms import RenueBooksForm, RenewBookModelForm
+from django.utils.decorators import method_decorator
+from django.views import generic
+from django.views.generic import edit as editViews
+
+from catalog.models import Author, Book, BookInstance, Genre
+
+from .forms import RenewBookModelForm, RenueBooksForm
+
 # Create your views here.
 
 
@@ -143,3 +146,21 @@ def renew_book_librarian(request, pk):
 #         request = self.request
 #         form.save()
 #         return render(self.request, 'register/thank_you.html')
+
+
+class AuthorCreateView(editViews.CreateView):
+    model = Author
+    fields = '__all__'
+    initial = { 'date_of_death' : '05/01/2018' }
+
+class AuthorUpdateView(editViews.UpdateView):
+    model = Author
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death', ]
+
+class AuthorDeleteView(editViews.DeleteView):
+    model = Author
+    success_url = reverse_lazy('catalog:author')
+
+
+
+

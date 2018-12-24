@@ -20,13 +20,20 @@ from . import views
 app_name = 'catalog'
 
 urlpatterns = [
+    #Index
     path('', views.index, name='index'),
+    #Books
     path('books/', views.BookListView.as_view(), name='book'),
     path('books/<int:pk>', views.BookDetialView.as_view(), name='book-detail'),
-    path('authors/', views.AuthorListView.as_view(), name='author'),
-    path('author/<int:pk>', views.AuthorDetailView.as_view(), name='author-detail'),
     path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
     path('allbooks/', views.LoanedBooksByAdminListview.as_view(), name='all-borrowed'),
     path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
+    #Author
+    path('authors/', views.AuthorListView.as_view(), name='author'),
+    path('authors/create/', views.AuthorCreateView.as_view(), name='author-create'),
+    path('author/<int:pk>/', views.AuthorDetailView.as_view(), name='author-detail'),
+    path('authors/<int:pk>/update/', views.AuthorUpdateView.as_view(), name='author-update'),
+    path('authors/<int:pk>/delete/', views.AuthorDeleteView.as_view(), name='author-delete'),
     # path('book/<uuid:pk>/renew-model-form/', views.RegisterView, name='renew-modelform-book-librarian'),
+    
 ]
