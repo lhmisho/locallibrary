@@ -162,5 +162,16 @@ class AuthorDeleteView(editViews.DeleteView):
     success_url = reverse_lazy('catalog:author')
 
 
+class BookCreateView(editViews.CreateView):
+    model = Book
+    fields = ['title','author','summary','isbn','genre']
+    template_name = 'catalog/book_create.html'
 
+class BookUpdateView(editViews.UpdateView):
+    model = Book
+    fields = '__all__'
+    template_name = 'catalog/book_create.html'
 
+class BookDeleteView(editViews.DeleteView):
+    model = Book
+    success_url = reverse_lazy('catalog:book')
