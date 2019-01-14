@@ -8,6 +8,7 @@ django = "==2.1"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 pylint = "*"

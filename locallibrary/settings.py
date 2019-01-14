@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +53,24 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # other framework
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)
+
 
 ROOT_URLCONF = 'locallibrary.urls'
 
