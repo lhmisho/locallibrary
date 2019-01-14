@@ -11,5 +11,7 @@ urlpatterns = [
     path('author/', AuthorListApiView.as_view()),
     path('book/new/', BookApiNew.as_view()),
     path('book/<int:pk>/', BookApiUpdateView.as_view()),
+    path('rest-auth/', include('rest_auth.urls')),
+    path(r'rest-auth/registration/', include('rest_auth.registration.urls')),
     # path('book/view/', BookViewSets.as_view()),
 ]

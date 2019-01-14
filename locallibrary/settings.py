@@ -41,9 +41,19 @@ INSTALLED_APPS = [
     'blog',
     'api',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest',
     'corsheaders',
+    'rest_auth',
+    'rest_auth.registration',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -64,7 +74,11 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
+        )
 }
 
 CORS_ORIGIN_WHITELIST = (
