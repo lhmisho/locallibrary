@@ -29,7 +29,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', RedirectView.as_view(url='/catalog/', permanent=True)),
     path('admin/', admin.site.urls),
+    #path('api/', include('api.urls')),
+    path('api/', include('api.urls')),
     path('catalog/', include('catalog.urls')),
+    path('rest/', include('rest.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 #Add Django site authentication urls (for login, logout, password management)
