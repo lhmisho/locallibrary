@@ -1,7 +1,7 @@
 
 from django.urls import path, include
 from .views import BookListApiView, AuthorListApiView, BookViewSets
-from .views import BookApiNew, BookApiUpdateView, AuthorViewSetApi, book, book_detail
+from .views import BookApiNew, BookApiUpdateView, AuthorViewSetApi, book, book_detail, BookApiView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -9,7 +9,9 @@ router.register(r'books', BookViewSets)
 router.register('author_api', AuthorViewSetApi)
 urlpatterns = [
     path('book/', BookListApiView.as_view()),
-    path('books_func/', book),
+    path('book/<int:id>/', BookListApiView.as_view()),
+    # path('books_func/', book),
+    path('books_func/', BookApiView.as_view()),
     path('books_func/<int:id>/', book_detail),
     path('author/', AuthorListApiView.as_view()),
     path('book/new/', BookApiNew.as_view()),
