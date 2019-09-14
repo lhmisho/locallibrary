@@ -29,6 +29,7 @@ class Book(models.Model):
     isbn    = models.CharField('ISBN', max_length=13,
                             help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre   = models.ManyToManyField(Genre, help_text='Select a genre for this book')
+    price   = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
 
     def __str__(self):
         """String for representing the Model object."""
@@ -69,6 +70,7 @@ class BookInstance(models.Model):
     def __str__(self):
         return f'{self.id}({self.book.title})' # '{0} ({1})'.format(self.id,self.book.title)).
 
+
 class Author(models.Model):
     """Model representing an author."""
     first_name  = models.CharField(max_length=120)
@@ -85,4 +87,13 @@ class Author(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'{self.first_name},{self.last_name}'
+        return f'{self.first_name} {self.last_name}'
+
+
+class Snippet(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100, blank=True, default='')
+    code = models.TextField()
+
+    def __str__(self):
+        return self.title

@@ -10,7 +10,6 @@ class Blog(models.Model):
         return self.name
 
 
-
 class Author(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
@@ -37,3 +36,13 @@ class Entry(models.Model):
 
 class ThemeBlog(Blog):
     theme = models.CharField(max_length=120)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
