@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -33,6 +34,9 @@ class Book(models.Model):
     genre   = models.ManyToManyField(Genre, help_text='Select a genre for this book')
     price   = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     edited_by  = models.ForeignKey(User, default=None, blank=True, null=True, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, blank=True, null=True, on_delete=models.CASCADE, related_name="creator")
+    edit_by = models.ForeignKey(User, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='editor')
+
 
     def __str__(self):
         """String for representing the Model object."""

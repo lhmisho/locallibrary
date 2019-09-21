@@ -30,7 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api/', include('api.urls')),
     path('api/v1/', include('api.urls')),
-    # path('api/v1/rest_auth/', include('rest_auth.urls')),
+    path('api/v1/auth/', include('rest_framework.urls')),
     path('catalog/', include('catalog.urls')),
     path('rest/', include('rest.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

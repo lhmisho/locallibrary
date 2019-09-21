@@ -8,8 +8,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import generics
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from catalog.models import Author, Book, Snippet
 
 from .serializers import (AuthorHyperLinkSerializers, AuthorSerializer,
@@ -39,6 +40,7 @@ class BookApiView(APIView):
 
 
 class BookDetailView(APIView):
+
     def get_object(self, id):
         try:
             return Book.objects.get(id=id)
@@ -65,6 +67,7 @@ class BookDetailView(APIView):
         return HttpResponse(status=204)
 
 
+
 class BookListApiView(generics.GenericAPIView,
             mixins.ListModelMixin, mixins.CreateModelMixin, 
             mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
@@ -73,6 +76,15 @@ class BookListApiView(generics.GenericAPIView,
     lookup_field = 'id'
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
+
+
+class BookListApiView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    lookup_field = 'id'
+    authentication_classes = [TokenAuthentication,SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id=None):
         if id:
@@ -84,13 +96,15 @@ class BookListApiView(generics.GenericAPIView,
         return self.create(request)
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(created_by=self.request.user)
 
     def put(self, request, id=None):
         return self.update(request, id)
     
     def perform_update(self, serializer):
+
         return serializer.save(edited_by=self.request.user)
+
 
     def delete(self, request, id=None):
         return self.destroy(request, id)
