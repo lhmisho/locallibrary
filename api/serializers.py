@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from catalog.models import Book, BookInstance, Author, Snippet
 from django.contrib.auth.models import User
-
+from django.contrib.auth import authenticate
+from rest_framework import exceptions
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,7 +20,7 @@ class BookSerializer(serializers.ModelSerializer):
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ['first_name', 'last_name','date_of_birth']
+        fields = ['first_name', 'last_name', 'date_of_birth']
 
     # def create(self, validated_data):
     #     pass
@@ -41,6 +42,31 @@ class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippet
         fields = ('id', 'title', 'code')
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        username = data.get("username", "")
+        password = data.get("password", "")
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    data["user"] = user
+                else:
+                    msg = "User is deactivated"
+                    raise exceptions.ValidationError(msg)
+            else:
+                msg = "Unable to login with given cradentials"
+                raise exceptions.ValidationError(msg)
+        else:
+            msg = "Must provide username and password both"
+            raise exceptions.ValidationError(msg)
+        return data
 
 # class SnippetSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)

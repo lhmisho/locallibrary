@@ -6,6 +6,7 @@ from datetime import date
 import  uuid
 # Create your models here.
 
+
 class Genre(models.Model):
     """Model representing a book genre"""
 
@@ -21,6 +22,7 @@ class Genre(models.Model):
 
     display_genre.short_description = 'Genre'
 
+
 class Book(models.Model):
     """ Model representing books """
     title   = models.CharField(max_length=120)
@@ -30,6 +32,7 @@ class Book(models.Model):
                             help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre   = models.ManyToManyField(Genre, help_text='Select a genre for this book')
     price   = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    edited_by  = models.ForeignKey(User, default=None, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         """String for representing the Model object."""

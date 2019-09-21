@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import generics
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from catalog.models import Author, Book, Snippet
 
 from .serializers import (AuthorHyperLinkSerializers, AuthorSerializer,
@@ -36,6 +37,7 @@ class BookApiView(APIView):
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
 
+
 class BookDetailView(APIView):
     def get_object(self, id):
         try:
@@ -62,12 +64,15 @@ class BookDetailView(APIView):
         instance.delete()
         return HttpResponse(status=204)
 
-class BookListApiView(generics.GenericAPIView, 
+
+class BookListApiView(generics.GenericAPIView,
             mixins.ListModelMixin, mixins.CreateModelMixin, 
             mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     serializer_class = BookSerializer
     queryset = Book.objects.all()
     lookup_field = 'id'
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
 
     def get(self, request, id=None):
         if id:
@@ -85,7 +90,7 @@ class BookListApiView(generics.GenericAPIView,
         return self.update(request, id)
     
     def perform_update(self, serializer):
-        return serializer.save()
+        return serializer.save(edited_by=self.request.user)
 
     def delete(self, request, id=None):
         return self.destroy(request, id)
@@ -94,9 +99,11 @@ class BookListApiView(generics.GenericAPIView,
 #     queryset = Book.objects.all()
 #     serializer_class = BookSerializer
 
+
 class AuthorListApiView(generics.ListAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+
 
 class BookViewSets(viewsets.ModelViewSet):
     queryset = Book.objects.all()
@@ -108,14 +115,17 @@ class BookApiNew(generics.ListCreateAPIView):
     queryset = Book.objects.all().order_by('-id')[:1]
     serializer_class = BookSerializer
 
+
 class BookApiUpdateView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
+
 class AuthorViewSetApi(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorHyperLinkSerializers
+
 
 @csrf_exempt
 def book(request):
@@ -133,6 +143,22 @@ def book(request):
             return JsonResponse(serializer.data, status=200)
         return JsonResponse(serializer.errors, status=400)
 
+
+@csrf_exempt
+def author(request):
+    if request.method == 'GET':
+        author = Author.objects.all()
+        serializer = AuthorSerializer(author, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    if request.method == 'POST':
+        data_perser = JSONParser()
+        data = data_perser.parse(request)
+        serializer = BookSerializer(data=data)
+        if data.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
 def book_detail(request, id):
@@ -204,8 +230,30 @@ def snippet_detail(request, pk):
         snippet.delete()
         return HttpResponse(status=204)
 
+from .serializers import LoginSerializer
+from django.contrib.auth import login as dj_login, logout as dj_logout
+from rest_framework.authtoken.models import Token
 
 
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        dj_login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key}, status=200) 
+        
+
+from rest_framework.authentication import TokenAuthentication
+
+
+class LogoutView(APIView):
+    authentication_classes = (TokenAuthentication, )
+
+    def post(self, request):
+        dj_logout(request)
+        return Response(status=204)
 
 
 
